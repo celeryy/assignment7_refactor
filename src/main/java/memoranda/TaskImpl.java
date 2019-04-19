@@ -136,13 +136,18 @@ public class TaskImpl implements Task, Comparable {
      * @see main.java.memoranda.Task#getStatus()
      */
     public int getStatus(CalendarDate date) {
-        CalendarDate start = getStartDate();
-        CalendarDate end = getEndDate();
+        
         if (isFrozen())
             return Task.FROZEN;
         if (isCompleted())
                 return Task.COMPLETED;
-        
+		return Task.FAILED;
+    }
+    
+    public int getStatus2(CalendarDate date){
+    	
+    	CalendarDate start = getStartDate();
+        CalendarDate end = getEndDate();
 		if (date.inPeriod(start, end)) {
             if (date.equals(end))
                 return Task.DEADLINE;
