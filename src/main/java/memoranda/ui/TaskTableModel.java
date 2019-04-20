@@ -59,7 +59,7 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
      * @param root
      */
     public TaskTableModel(){
-        super(ACurrentProject.get());
+        super(ACurrentProject.getProject());
     }
 
     /**

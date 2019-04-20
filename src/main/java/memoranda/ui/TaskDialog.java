@@ -103,8 +103,8 @@ public class TaskDialog extends JDialog {
 	JSpinner progress = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
 	
 	//Forbid to set dates outside the bounds
-	CalendarDate startDateMin = ACurrentProject.get().getStartDate();
-	CalendarDate startDateMax = ACurrentProject.get().getEndDate();
+	CalendarDate startDateMin = ACurrentProject.getProject().getStartDate();
+	CalendarDate startDateMax = ACurrentProject.getProject().getEndDate();
 	CalendarDate endDateMin = startDateMin;
 	CalendarDate endDateMax = startDateMax;
     

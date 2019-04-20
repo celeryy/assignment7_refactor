@@ -24,7 +24,7 @@ public class ProjectsTablePanel extends JPanel {
     JScrollPane scrollPane = new JScrollPane();
     public JTable projectsTable = new JTable() {
         public TableCellRenderer getCellRenderer(int row, int column) {
-            if (((String) getModel().getValueAt(row, PROJECT_ID)).equals(ACurrentProject.get().getID())) {
+            if (((String) getModel().getValueAt(row, PROJECT_ID)).equals(ACurrentProject.getProject().getID())) {
                 return new javax.swing.table.DefaultTableCellRenderer() {
                     public Component getTableCellRendererComponent(
                         JTable table,

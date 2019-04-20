@@ -336,7 +336,7 @@ public class TaskPanel extends JPanel {
 
         CurrentDate.addDateListener(new DateListener() {
             public void dateChange(CalendarDate d) {
-                newTaskB.setEnabled(d.inPeriod(ACurrentProject.get().getStartDate(), ACurrentProject.get().getEndDate()));
+                newTaskB.setEnabled(d.inPeriod(ACurrentProject.getProject().getStartDate(), ACurrentProject.getProject().getEndDate()));
             }
         });
         ACurrentProject.addProjectListener(new IProjectListener() {
@@ -482,7 +482,7 @@ public class TaskPanel extends JPanel {
         
 //		CurrentProject.getTaskList().adjustParentTasks(t);
 
-        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.get());
+        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.getProject());
         taskTable.tableChanged();
         parentPanel.updateIndicators();
         //taskTable.updateUI();
@@ -513,7 +513,7 @@ public class TaskPanel extends JPanel {
 		ITask newTask = ACurrentProject.getTaskList().createTask(sd, ed, dlg.todoField.getText(), dlg.priorityCB.getSelectedIndex(),effort, dlg.descriptionField.getText(),null);
 //		CurrentProject.getTaskList().adjustParentTasks(newTask);
 		newTask.setProgress(((Integer)dlg.progress.getValue()).intValue());
-        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.get());
+        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.getProject());
         taskTable.tableChanged();
         parentPanel.updateIndicators();
         //taskTable.updateUI();
@@ -536,7 +536,7 @@ public class TaskPanel extends JPanel {
 		if (parent.getEndDate() != null) 
 			dlg.setEndDate(parent.getEndDate());
 		else 
-			dlg.setEndDate(ACurrentProject.get().getEndDate());
+			dlg.setEndDate(ACurrentProject.getProject().getEndDate());
 		dlg.setStartDateLimit(parent.getStartDate(), parent.getEndDate());
 		dlg.setEndDateLimit(parent.getStartDate(), parent.getEndDate());
         dlg.setLocation((frmSize.width - dlg.getSize().width) / 2 + loc.x, (frmSize.height - dlg.getSize().height) / 2 + loc.y);
@@ -555,7 +555,7 @@ public class TaskPanel extends JPanel {
         newTask.setProgress(((Integer)dlg.progress.getValue()).intValue());
 //		CurrentProject.getTaskList().adjustParentTasks(newTask);
 
-		CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.get());
+		CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.getProject());
         taskTable.tableChanged();
         parentPanel.updateIndicators();
         //taskTable.updateUI();
@@ -602,7 +602,7 @@ public class TaskPanel extends JPanel {
 //		Task newTask = CurrentProject.getTaskList().createTask(sd, ed, dlg.todoField.getText(), dlg.priorityCB.getSelectedIndex(),effort, dlg.descriptionField.getText(),parentTaskId);
 //		
 		
-        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.get());
+        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.getProject());
         taskTable.tableChanged();
 //        parentPanel.updateIndicators();
         //taskTable.updateUI();
@@ -672,7 +672,7 @@ public class TaskPanel extends JPanel {
             ACurrentProject.getTaskList().removeTask((ITask)toremove.get(i));
         }
         taskTable.tableChanged();
-        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.get());
+        CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.getProject());
         parentPanel.updateIndicators();
         //taskTable.updateUI();
 
@@ -693,7 +693,7 @@ public class TaskPanel extends JPanel {
 			t.setProgress(100);
 		}
 		taskTable.tableChanged();
-		CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.get());
+		CurrentStorage.get().storeTaskList(ACurrentProject.getTaskList(), ACurrentProject.getProject());
 		parentPanel.updateIndicators();
 		//taskTable.updateUI();
 	}

@@ -257,7 +257,7 @@ public class AppFrame extends JFrame {
         contentPane = (JPanel) this.getContentPane();
         contentPane.setLayout(borderLayout1);
         //this.setSize(new Dimension(800, 500));
-        this.setTitle("Memoranda - " + ACurrentProject.get().getTitle());
+        this.setTitle("Memoranda - " + ACurrentProject.getProject().getTitle());
         //Added a space to App.VERSION_INFO to make it look some nicer
         statusBar.setText(" Version:" + App.VERSION_INFO + " (Build "
                 + App.BUILD_INFO + " )");
@@ -621,7 +621,7 @@ public class AppFrame extends JFrame {
             }
 
             public void projectWasChanged() {
-                setTitle("Memoranda - " + ACurrentProject.get().getTitle());
+                setTitle("Memoranda - " + ACurrentProject.getProject().getTitle());
             }
         });
 
@@ -765,7 +765,7 @@ public class AppFrame extends JFrame {
             return;
         Context.put("LAST_SELECTED_PACK_FILE", chooser.getSelectedFile());        
         java.io.File f = chooser.getSelectedFile();
-        ProjectPackager.pack(ACurrentProject.get(), f);
+        ProjectPackager.pack(ACurrentProject.getProject(), f);
     }
 
     public void doPrjUnPack() {
@@ -919,7 +919,7 @@ public class AppFrame extends JFrame {
                 boolean xhtml =
                         chooser.getFileFilter().getDescription().indexOf("XHTML") > -1;
                  ACurrentProject.save();
-                 ProjectExporter.export(ACurrentProject.get(), chooser.getSelectedFile(), enc, xhtml, 
+                 ProjectExporter.export(ACurrentProject.getProject(), chooser.getSelectedFile(), enc, xhtml, 
                                  dlg.splitChB.isSelected(), true, nument, dlg.titlesAsHeadersChB.isSelected(), false); 
                 }
             

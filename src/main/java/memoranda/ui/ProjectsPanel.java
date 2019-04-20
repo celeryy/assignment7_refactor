@@ -137,7 +137,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 		curProjectTitle.setForeground(new Color(64, 70, 128));
 		curProjectTitle.setMaximumSize(new Dimension(32767, 22));
 		curProjectTitle.setPreferredSize(new Dimension(32767, 22));
-		curProjectTitle.setText(ACurrentProject.get().getTitle());
+		curProjectTitle.setText(ACurrentProject.getProject().getTitle());
 		curProjectTitle.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				toggleButton_actionPerformed(null);
@@ -243,7 +243,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 				IResourcesList rl) {
 			}
 			public void projectWasChanged() {
-				curProjectTitle.setText(ACurrentProject.get().getTitle());
+				curProjectTitle.setText(ACurrentProject.getProject().getTitle());
 				prjTablePanel.updateUI();
 			}
 		});
@@ -266,7 +266,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 							prjTablePanel.projectsTable.getSelectedRow(),
 							ProjectsTablePanel.PROJECT_ID)
 						.toString()
-						.equals(ACurrentProject.get().getID());
+						.equals(ACurrentProject.getProject().getID());
 				ppDeleteProject.setEnabled(enabled);
 				ppOpenProject.setEnabled(enabled);				
 				ppProperties.setEnabled(true);

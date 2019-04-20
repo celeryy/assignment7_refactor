@@ -57,8 +57,8 @@ public class JNCalendarCellRenderer extends javax.swing.table.DefaultTableCellRe
         }
         
 		if (!isSelected) {
-			CalendarDate cpsd = ACurrentProject.get().getStartDate();
-            CalendarDate cped = ACurrentProject.get().getEndDate();
+			CalendarDate cpsd = ACurrentProject.getProject().getStartDate();
+            CalendarDate cped = ACurrentProject.getProject().getEndDate();
             if (!(((d.after(cpsd)) && (d.before(cped))) || (d.equals(cpsd)) || (d.equals(cped)))) {
 				label.setBackground(new Color(0xF0,0xF0,0xF0));
 				return label;

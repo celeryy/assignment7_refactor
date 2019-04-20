@@ -268,7 +268,7 @@ public class DailyItemsPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (editorPanel.isDocumentChanged()) {
                     saveNote();
-                    CurrentStorage.get().storeNoteList(ACurrentProject.getNoteList(), ACurrentProject.get());
+                    CurrentStorage.get().storeNoteList(ACurrentProject.getNoteList(), ACurrentProject.getProject());
                 }
             }
         });
@@ -295,7 +295,7 @@ public class DailyItemsPanel extends JPanel {
         currentNote = ACurrentProject.getNoteList().getNoteForDate(CurrentDate.get());
 		ACurrentNote.set(currentNote,true);
         editorPanel.setDocument(currentNote);
-        AHistory.add(new AHistoryItem(CurrentDate.get(), ACurrentProject.get()));
+        AHistory.add(new AHistoryItem(CurrentDate.get(), ACurrentProject.getProject()));
         cmainPanel.add(mainTabsPanel, BorderLayout.CENTER);
         mainTabsPanel.add(eventsTabbedPane, "EVENTSTAB");
         mainTabsPanel.add(tasksTabbedPane, "TASKSTAB");
@@ -311,7 +311,7 @@ public class DailyItemsPanel extends JPanel {
         Cursor cur = App.getFrame().getCursor();
         App.getFrame().setCursor(waitCursor);
         if (!changedByHistory) {
-           AHistory.add(new AHistoryItem(newdate, ACurrentProject.get()));
+           AHistory.add(new AHistoryItem(newdate, ACurrentProject.getProject()));
 		}
         if (!dateChangedByCalendar) {
             calendarIgnoreChange = true;
