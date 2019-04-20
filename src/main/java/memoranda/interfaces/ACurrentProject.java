@@ -61,7 +61,12 @@ public class ACurrentProject {
     }
         
 
-    public static AProject get() {
+    /**
+     * TASK 3-1 SMELL WITHIN A CLASS
+     * get() is not a descriptive method name- should be getProject
+     * @return
+     */
+    public static AProject getProject() {
         return _project;
     }
 
@@ -127,4 +132,5 @@ public class ACurrentProject {
         _notelist = null;
         _resources = null;
     }
+
 }
