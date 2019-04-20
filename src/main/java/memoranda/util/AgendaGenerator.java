@@ -48,7 +48,7 @@ public class AgendaGenerator {
 
 	static String generateTasksInfo(AProject p, CalendarDate date, Collection expandedTasks) {    	    	
 		ITaskList tl;
-		if (p.getID().equals(ACurrentProject.get().getID())) {
+		if (p.getID().equals(ACurrentProject.getProject().getID())) {
 			tl = ACurrentProject.getTaskList();        	
 		}
 		else {
@@ -289,12 +289,12 @@ public class AgendaGenerator {
 						+ "<h1>"
 						+ Local.getString("Projects and tasks")
 						+ "</h1>\n";
-		s += generateProjectInfo(ACurrentProject.get(), date, expandedTasks);        
+		s += generateProjectInfo(ACurrentProject.getProject(), date, expandedTasks);        
 		for (Iterator i = AProjectManager.getActiveProjects().iterator();
 				i.hasNext();
 				) {
 			AProject p = (AProject) i.next();
-			if (!p.getID().equals(ACurrentProject.get().getID()))
+			if (!p.getID().equals(ACurrentProject.getProject().getID()))
 				s += generateProjectInfo(p, date, expandedTasks);
 		}
 		return s + "</td>";
