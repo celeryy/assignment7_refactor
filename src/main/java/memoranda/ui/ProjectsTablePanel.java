@@ -12,10 +12,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectManager;
 import main.java.memoranda.date.CalendarDate;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.AProjectManager;
 import main.java.memoranda.util.Local;
 
 /*$Id: ProjectsTablePanel.java,v 1.6 2004/04/05 10:05:44 alexeya Exp $*/
@@ -24,7 +24,7 @@ public class ProjectsTablePanel extends JPanel {
     JScrollPane scrollPane = new JScrollPane();
     public JTable projectsTable = new JTable() {
         public TableCellRenderer getCellRenderer(int row, int column) {
-            if (((String) getModel().getValueAt(row, PROJECT_ID)).equals(CurrentProject.get().getID())) {
+            if (((String) getModel().getValueAt(row, PROJECT_ID)).equals(ACurrentProject.get().getID())) {
                 return new javax.swing.table.DefaultTableCellRenderer() {
                     public Component getTableCellRendererComponent(
                         JTable table,
@@ -120,8 +120,8 @@ public class ProjectsTablePanel extends JPanel {
         return (String) projectsTable.getModel().getValueAt(projectsTable.getSelectedRow(), PROJECT_ID);
     }
 
-    public Project getSelectedProject() {
-        return (Project) projectsTable.getModel().getValueAt(projectsTable.getSelectedRow(), PROJECT);
+    public AProject getSelectedProject() {
+        return (AProject) projectsTable.getModel().getValueAt(projectsTable.getSelectedRow(), PROJECT);
     }
 
     static final int PROJECT = 101;
@@ -147,11 +147,11 @@ public class ProjectsTablePanel extends JPanel {
 
         public Object getValueAt(int row, int col) {
 			if(row==-1) return "";
-			Project pr;
+			AProject pr;
 			if (activeOnly)
-				pr = (Project) ProjectManager.getActiveProjects().get(row);
+				pr = (AProject) AProjectManager.getActiveProjects().get(row);
 			else
-				pr = (Project) ProjectManager.getAllProjects().get(row);
+				pr = (AProject) AProjectManager.getAllProjects().get(row);
             switch (col) {
                 case 0 :
                     return pr.getTitle();
@@ -176,8 +176,8 @@ public class ProjectsTablePanel extends JPanel {
 
         public int getRowCount() {
             if (activeOnly)
-                return ProjectManager.getActiveProjectsNumber();
-            return ProjectManager.getAllProjectsNumber();
+                return AProjectManager.getActiveProjectsNumber();
+            return AProjectManager.getAllProjectsNumber();
         }
 
         public String getColumnName(int col) {
@@ -187,15 +187,15 @@ public class ProjectsTablePanel extends JPanel {
 
     String getStatusString(int status) {
         switch (status) {
-            case Project.ACTIVE :
+            case AProject.ACTIVE :
                 return Local.getString("Active");
-            case Project.COMPLETED :
+            case AProject.COMPLETED :
                 return Local.getString("Completed");
-            case Project.FAILED :
+            case AProject.FAILED :
                 return Local.getString("Failed");
-            case Project.FROZEN :
+            case AProject.FROZEN :
                 return Local.getString("Frozen");
-            case Project.SCHEDULED :
+            case AProject.SCHEDULED :
                 return Local.getString("Scheduled");
         }
         return "";

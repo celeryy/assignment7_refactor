@@ -22,8 +22,8 @@ import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.Resource;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AResource;
 import main.java.memoranda.util.AppList;
 import main.java.memoranda.util.CurrentStorage;
 import main.java.memoranda.util.Local;
@@ -208,17 +208,17 @@ public class ResourcesPanel extends JPanel {
             // if file if projectFile, than copy the file and change url.
             if (dlg.projectFileCB.isSelected()) {
             	fpath = copyFileToProjectDir(fpath);
-            	CurrentProject.getResourcesList().addResource(fpath, false, true);
+            	ACurrentProject.getResourcesList().addResource(fpath, false, true);
             }
             else
-            	CurrentProject.getResourcesList().addResource(fpath);            	     	
+            	ACurrentProject.getResourcesList().addResource(fpath);            	     	
             
             resourcesTable.tableChanged();
         }
         else {
             if (!Util.checkBrowser())
                 return;
-            CurrentProject.getResourcesList().addResource(dlg.urlField.getText(), true, false);
+            ACurrentProject.getResourcesList().addResource(dlg.urlField.getText(), true, false);
             resourcesTable.tableChanged();
         }
     }
@@ -247,8 +247,8 @@ public class ResourcesPanel extends JPanel {
         if (n != JOptionPane.YES_OPTION)
             return;
         for (int i = 0; i < toRemove.length; i++) {        	
-        		CurrentProject.getResourcesList().removeResource(
-                        ((Resource) resourcesTable.getModel().getValueAt(toRemove[i], ResourcesTable._RESOURCE)).getPath());
+        		ACurrentProject.getResourcesList().removeResource(
+                        ((AResource) resourcesTable.getModel().getValueAt(toRemove[i], ResourcesTable._RESOURCE)).getPath());
         }
         resourcesTable.tableChanged();
     }
@@ -411,10 +411,10 @@ public class ResourcesPanel extends JPanel {
 		} else
 			baseName = srcStr;
 		
-	  String destStr = JN_DOCPATH + CurrentProject.get().getID() 
+	  String destStr = JN_DOCPATH + ACurrentProject.get().getID() 
 	  				   + File.separator + "_projectFiles" + File.separator + baseName;
 	  
-	  File f = new File(JN_DOCPATH + CurrentProject.get().getID() + File.separator + "_projectFiles");
+	  File f = new File(JN_DOCPATH + ACurrentProject.get().getID() + File.separator + "_projectFiles");
 	  if (!f.exists()) {
 		  f.mkdirs();
 	  }	  

@@ -1,17 +1,20 @@
+/**
+ * 
+ */
 package main.java.memoranda.ui;
+
 
 import java.io.File;
 import java.util.Vector;
-import java.awt.*;
-
-import javax.swing.*;
-import javax.swing.border.*;
 
 import main.java.memoranda.util.Configuration;
 import main.java.memoranda.util.CurrentStorage;
 import main.java.memoranda.util.Local;
 import main.java.memoranda.util.MimeTypesList;
+import java.awt.*;
 
+import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.event.*;
 
 /*$Id: PreferencesDialog.java,v 1.16 2006/06/28 22:58:31 alexeya Exp $*/

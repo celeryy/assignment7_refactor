@@ -33,16 +33,16 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectListener;
-import main.java.memoranda.ProjectManager;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.TaskList;
 import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.date.CurrentDate;
 import main.java.memoranda.date.DateListener;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.AProjectManager;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.util.*;
 
 /*$Id: ProjectsPanel.java,v 1.14 2005/01/04 09:59:22 pbielen Exp $*/
@@ -137,7 +137,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 		curProjectTitle.setForeground(new Color(64, 70, 128));
 		curProjectTitle.setMaximumSize(new Dimension(32767, 22));
 		curProjectTitle.setPreferredSize(new Dimension(32767, 22));
-		curProjectTitle.setText(CurrentProject.get().getTitle());
+		curProjectTitle.setText(ACurrentProject.get().getTitle());
 		curProjectTitle.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				toggleButton_actionPerformed(null);
@@ -235,15 +235,15 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 		projectsPPMenu.add(ppProperties);
 		projectsPPMenu.addSeparator();
 		projectsPPMenu.add(ppShowActiveOnlyChB);
-		CurrentProject.addProjectListener(new ProjectListener() {
+		ACurrentProject.addProjectListener(new IProjectListener() {
 			public void projectChange(
-				Project p,
-				NoteList nl,
-				TaskList tl,
-				ResourcesList rl) {
+				AProject p,
+				INoteList nl,
+				ITaskList tl,
+				IResourcesList rl) {
 			}
 			public void projectWasChanged() {
-				curProjectTitle.setText(CurrentProject.get().getTitle());
+				curProjectTitle.setText(ACurrentProject.get().getTitle());
 				prjTablePanel.updateUI();
 			}
 		});
@@ -266,7 +266,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 							prjTablePanel.projectsTable.getSelectedRow(),
 							ProjectsTablePanel.PROJECT_ID)
 						.toString()
-						.equals(CurrentProject.get().getID());
+						.equals(ACurrentProject.get().getID());
 				ppDeleteProject.setEnabled(enabled);
 				ppOpenProject.setEnabled(enabled);				
 				ppProperties.setEnabled(true);
@@ -335,7 +335,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 	}
 
 	void ppOpenProject_actionPerformed(ActionEvent e) {
-		CurrentProject.set(prjTablePanel.getSelectedProject());
+		ACurrentProject.set(prjTablePanel.getSelectedProject());
 		prjTablePanel.updateUI();
 		ppDeleteProject.setEnabled(false);
 		ppOpenProject.setEnabled(false);
@@ -348,7 +348,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 
 	void ppDeleteProject_actionPerformed(ActionEvent e) {
 		String msg;
-		Project prj;
+		AProject prj;
 		Vector toremove = new Vector();
 		if (prjTablePanel.projectsTable.getSelectedRows().length > 1)
 			msg =
@@ -382,7 +382,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 			i < prjTablePanel.projectsTable.getSelectedRows().length;
 			i++) {
 			prj =
-				(main.java.memoranda.Project) prjTablePanel
+				(main.java.memoranda.interfaces.AProject) prjTablePanel
 					.projectsTable
 					.getModel()
 					.getValueAt(
@@ -391,7 +391,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 			toremove.add(prj.getID());
 		}
 		for (int i = 0; i < toremove.size(); i++) {
-			ProjectManager.removeProject((String) toremove.get(i));
+			AProjectManager.removeProject((String) toremove.get(i));
 		}
 		CurrentStorage.get().storeProjectManager();
 		prjTablePanel.projectsTable.clearSelection();
@@ -400,7 +400,7 @@ public class ProjectsPanel extends JPanel implements ExpandablePanel {
 	}
 
 	void ppProperties_actionPerformed(ActionEvent e) {
-		Project prj = prjTablePanel.getSelectedProject();
+		AProject prj = prjTablePanel.getSelectedProject();
 		ProjectDialog dlg =
 			new ProjectDialog(null, Local.getString("Project properties"));
 		Dimension dlgSize = dlg.getSize();

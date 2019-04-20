@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
-import main.java.memoranda.EventsScheduler;
+import main.java.memoranda.interfaces.AEventsScheduler;
 import main.java.memoranda.util.Configuration;
 
 /**
@@ -35,8 +35,8 @@ public class App {
        The actual values are substituted by the Ant build script using 
        'version' property and datestamp.*/
 
-	public static final String VERSION_INFO = "@VERSION@";
-	public static final String BUILD_INFO = "@BUILD@";
+	public static final String VERSION_INFO = "8";
+	public static final String BUILD_INFO = "1.8.0_201-b09";
 	
 	/*========================================================================*/
 
@@ -90,7 +90,7 @@ public class App {
 			System.out.println("[DEBUG] first day of week is set to " + fdow);
 		}
 
-		EventsScheduler.init();
+		AEventsScheduler.init();
 		frame = new AppFrame();
 		if (fullmode) {
 			init();
@@ -150,16 +150,16 @@ public class App {
 	private void showSplash() {
 		splash = new JFrame();
 		ImageIcon spl =
-			new ImageIcon(App.class.getResource("/ui/splash.png"));
+			new ImageIcon(App.class.getResource("/ui/groupworks2.jpg"));
 		JLabel l = new JLabel();
-		l.setSize(400, 300);
+		l.setSize(1024, 1024);
 		l.setIcon(spl);
 		splash.getContentPane().add(l);
-		splash.setSize(400, 300);
+		splash.setSize(1024, 1024);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		splash.setLocation(
-			(screenSize.width - 400) / 2,
-			(screenSize.height - 300) / 2);
+			(screenSize.width - 1024) / 2,
+			(screenSize.height - 1024) / 2);
 		splash.setUndecorated(true);
 		splash.setVisible(true);
 	}

@@ -24,12 +24,12 @@ import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import main.java.memoranda.EventsManager;
-import main.java.memoranda.EventsScheduler;
-import main.java.memoranda.History;
 import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.date.CurrentDate;
 import main.java.memoranda.date.DateListener;
+import main.java.memoranda.interfaces.AEventsManager;
+import main.java.memoranda.interfaces.AEventsScheduler;
+import main.java.memoranda.interfaces.AHistory;
 import main.java.memoranda.util.Configuration;
 import main.java.memoranda.util.CurrentStorage;
 import main.java.memoranda.util.Local;
@@ -64,7 +64,7 @@ public class EventsPanel extends JPanel {
     void jbInit() throws Exception {
         eventsToolBar.setFloatable(false);
 
-        historyBackB.setAction(History.historyBackAction);
+        historyBackB.setAction(AHistory.historyBackAction);
         historyBackB.setFocusable(false);
         historyBackB.setBorderPainted(false);
         historyBackB.setToolTipText(Local.getString("History back"));
@@ -74,7 +74,7 @@ public class EventsPanel extends JPanel {
         historyBackB.setMaximumSize(new Dimension(24, 24));
         historyBackB.setText("");
 
-        historyForwardB.setAction(History.historyForwardAction);
+        historyForwardB.setAction(AHistory.historyForwardAction);
         historyForwardB.setBorderPainted(false);
         historyForwardB.setFocusable(false);
         historyForwardB.setPreferredSize(new Dimension(24, 24));
@@ -225,8 +225,8 @@ public class EventsPanel extends JPanel {
 
     void editEventB_actionPerformed(ActionEvent e) {
         EventDialog dlg = new EventDialog(App.getFrame(), Local.getString("Event"));
-        main.java.memoranda.Event ev =
-            (main.java.memoranda.Event) eventsTable.getModel().getValueAt(
+        main.java.memoranda.interfaces.AEvent ev =
+            (main.java.memoranda.interfaces.AEvent) eventsTable.getModel().getValueAt(
                 eventsTable.getSelectedRow(),
                 EventsTable.EVENT);
         
@@ -240,12 +240,12 @@ public class EventsPanel extends JPanel {
         int rep = ev.getRepeat();
         if (rep > 0) {
             dlg.startDate.getModel().setValue(ev.getStartDate().getDate());
-            if (rep == EventsManager.REPEAT_DAILY) {
+            if (rep == AEventsManager.REPEAT_DAILY) {
                 dlg.dailyRepeatRB.setSelected(true);
                 dlg.dailyRepeatRB_actionPerformed(null);
                 dlg.daySpin.setValue(new Integer(ev.getPeriod()));
             }
-            else if (rep == EventsManager.REPEAT_WEEKLY) {
+            else if (rep == AEventsManager.REPEAT_WEEKLY) {
                 dlg.weeklyRepeatRB.setSelected(true);
                 dlg.weeklyRepeatRB_actionPerformed(null);
 		int d = ev.getPeriod() - 1;
@@ -255,12 +255,12 @@ public class EventsPanel extends JPanel {
 		}
                 dlg.weekdaysCB.setSelectedIndex(d);
             }
-            else if (rep == EventsManager.REPEAT_MONTHLY) {
+            else if (rep == AEventsManager.REPEAT_MONTHLY) {
                 dlg.monthlyRepeatRB.setSelected(true);
                 dlg.monthlyRepeatRB_actionPerformed(null);
                 dlg.dayOfMonthSpin.setValue(new Integer(ev.getPeriod()));
             }
-	    else if (rep == EventsManager.REPEAT_YEARLY) {
+	    else if (rep == AEventsManager.REPEAT_YEARLY) {
 		dlg.yearlyRepeatRB.setSelected(true);
 		dlg.yearlyRepeatRB_actionPerformed(null);
 		dlg.dayOfMonthSpin.setValue(new Integer(ev.getPeriod()));
@@ -282,7 +282,7 @@ public class EventsPanel extends JPanel {
         dlg.setVisible(true);
         if (dlg.CANCELLED)
             return;
-        EventsManager.removeEvent(ev);
+        AEventsManager.removeEvent(ev);
         
 		Calendar calendar = new GregorianCalendar(Local.getCurrentLocale()); //Fix deprecated methods to get hours
 		//by (jcscoobyrs) 14-Nov-2003 at 10:24:38 AM
@@ -297,7 +297,7 @@ public class EventsPanel extends JPanel {
         //int mm = ((Date) dlg.timeSpin.getModel().getValue()).getMinutes();
         String text = dlg.textField.getText();
         if (dlg.noRepeatRB.isSelected())
-   	    EventsManager.createEvent(CurrentDate.get(), hh, mm, text);
+   	    AEventsManager.createEvent(CurrentDate.get(), hh, mm, text);
         else {
 	    updateEvents(dlg,hh,mm,text);
 	}    
@@ -345,7 +345,7 @@ public class EventsPanel extends JPanel {
 		CalendarDate eventCalendarDate = new CalendarDate(dlg.getEventDate());
 		
     	if (dlg.noRepeatRB.isSelected())
-    		EventsManager.createEvent(eventCalendarDate, hh, mm, text);
+    		AEventsManager.createEvent(eventCalendarDate, hh, mm, text);
     	else {
     		updateEvents(dlg,hh,mm,text);
     	}
@@ -355,7 +355,7 @@ public class EventsPanel extends JPanel {
     private void saveEvents() {
 	CurrentStorage.get().storeEventsManager();
         eventsTable.refresh();
-        EventsScheduler.init();
+        AEventsScheduler.init();
         parentPanel.calendar.jnCalendar.updateUI();
         parentPanel.updateIndicators();
     }
@@ -368,11 +368,11 @@ public class EventsPanel extends JPanel {
         if (dlg.enableEndDateCB.isSelected())
             ed = new CalendarDate((Date) dlg.endDate.getModel().getValue());
         if (dlg.dailyRepeatRB.isSelected()) {
-            rtype = EventsManager.REPEAT_DAILY;
+            rtype = AEventsManager.REPEAT_DAILY;
             period = ((Integer) dlg.daySpin.getModel().getValue()).intValue();
         }
         else if (dlg.weeklyRepeatRB.isSelected()) {
-            rtype = EventsManager.REPEAT_WEEKLY;
+            rtype = AEventsManager.REPEAT_WEEKLY;
             period = dlg.weekdaysCB.getSelectedIndex() + 1;
 	    if (Configuration.get("FIRST_DAY_OF_WEEK").equals("mon")) {
 		if(period==7) period=1;
@@ -380,26 +380,26 @@ public class EventsPanel extends JPanel {
 	    }
         }
 	else if (dlg.yearlyRepeatRB.isSelected()) {
-	    rtype = EventsManager.REPEAT_YEARLY;
+	    rtype = AEventsManager.REPEAT_YEARLY;
 	    period = sd.getCalendar().get(Calendar.DAY_OF_YEAR);
 	    if((sd.getYear() % 4) == 0 && sd.getCalendar().get(Calendar.DAY_OF_YEAR) > 60) period--;
 	}
         else {
-            rtype = EventsManager.REPEAT_MONTHLY;
+            rtype = AEventsManager.REPEAT_MONTHLY;
             period = ((Integer) dlg.dayOfMonthSpin.getModel().getValue()).intValue();
         }
-        EventsManager.createRepeatableEvent(rtype, sd, ed, period, hh, mm, text, dlg.workingDaysOnlyCB.isSelected());
+        AEventsManager.createRepeatableEvent(rtype, sd, ed, period, hh, mm, text, dlg.workingDaysOnlyCB.isSelected());
     }
 
     void removeEventB_actionPerformed(ActionEvent e) {
 		String msg;
-		main.java.memoranda.Event ev;
+		main.java.memoranda.interfaces.AEvent ev;
 
 		if(eventsTable.getSelectedRows().length > 1) 
 			msg = Local.getString("Remove") + " " + eventsTable.getSelectedRows().length 
 				+ " " + Local.getString("events") + "\n" + Local.getString("Are you sure?");
 		else {
-			ev = (main.java.memoranda.Event) eventsTable.getModel().getValueAt(
+			ev = (main.java.memoranda.interfaces.AEvent) eventsTable.getModel().getValueAt(
                 eventsTable.getSelectedRow(),
                 EventsTable.EVENT);
 			msg = Local.getString("Remove event") + "\n'" 
@@ -415,9 +415,9 @@ public class EventsPanel extends JPanel {
         if (n != JOptionPane.YES_OPTION) return;
 
         for(int i=0; i< eventsTable.getSelectedRows().length;i++) {
-			ev = (main.java.memoranda.Event) eventsTable.getModel().getValueAt(
+			ev = (main.java.memoranda.interfaces.AEvent) eventsTable.getModel().getValueAt(
                   eventsTable.getSelectedRows()[i], EventsTable.EVENT);
-        EventsManager.removeEvent(ev);
+        AEventsManager.removeEvent(ev);
 		}
         eventsTable.getSelectionModel().clearSelection();
 /*        CurrentStorage.get().storeEventsManager();

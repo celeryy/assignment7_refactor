@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import main.java.memoranda.EventsManager;
+import main.java.memoranda.interfaces.AEventsManager;
 import main.java.memoranda.util.CurrentStorage;
 import main.java.memoranda.util.Local;
 import nu.xom.Document;
@@ -44,7 +44,7 @@ public class ExportSticker {
          */
         public static String remove1(String input) {
             
-            String original = "áàäéèëíìïóòöúùuñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ";
+            String original = "Ã¡Ã Ã¤Ã©Ã¨Ã«Ã­Ã¬Ã¯Ã³Ã²Ã¶ÃºÃ¹uÃ±Ã�Ã€Ã„Ã‰ÃˆÃ‹Ã�ÃŒÃ�Ã“Ã’Ã–ÃšÃ™ÃœÃ‘Ã§Ã‡";
             
             String ascii = "aaaeeeiiiooouuunAAAEEEIIIOOOUUUNcC";
             String output = input;
@@ -69,12 +69,12 @@ public class ExportSticker {
                         fwrite.write(contents);
                         
                         fwrite.close();
-                        JOptionPane.showMessageDialog(null,Local.getString("Documento creado con exito en su carpeta Memoranda =D"));
+                        JOptionPane.showMessageDialog(null,Local.getString("Successfully Created Document in Your Folder Memoranda =D"));
             
             
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null,Local.getString("NO Logramos crear su documento =(..."));
+            JOptionPane.showMessageDialog(null,Local.getString("Did Not Create Document =(..."));
         }
                 
                 
@@ -83,7 +83,7 @@ public class ExportSticker {
         }
         
         public String getSticker(){
-                Map stickers = EventsManager.getStickers();
+                Map stickers = AEventsManager.getStickers();
         String result = "";
         String nl = System.getProperty("line.separator"); 
                 for (Iterator i = stickers.keySet().iterator(); i.hasNext();) {

@@ -19,20 +19,20 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.EventNotificationListener;
-import main.java.memoranda.EventsManager;
-import main.java.memoranda.EventsScheduler;
-import main.java.memoranda.History;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectListener;
-import main.java.memoranda.ProjectManager;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.TaskList;
 import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.date.CurrentDate;
 import main.java.memoranda.date.DateListener;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.IEventNotificationListener;
+import main.java.memoranda.interfaces.AEventsManager;
+import main.java.memoranda.interfaces.AEventsScheduler;
+import main.java.memoranda.interfaces.AHistory;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.AProjectManager;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.util.AgendaGenerator;
 import main.java.memoranda.util.CurrentStorage;
 import main.java.memoranda.util.Local;
@@ -79,7 +79,7 @@ public class AgendaPanel extends JPanel {
 		viewer.setEditable(false);
 		viewer.setOpaque(false);
 		
-		historyBackB.setAction(History.historyBackAction);
+		historyBackB.setAction(AHistory.historyBackAction);
 		historyBackB.setFocusable(false);
 		historyBackB.setBorderPainted(false);
 		historyBackB.setToolTipText(Local.getString("History back"));
@@ -89,7 +89,7 @@ public class AgendaPanel extends JPanel {
 		historyBackB.setMaximumSize(new Dimension(24, 24));
 		historyBackB.setText("");
 
-		historyForwardB.setAction(History.historyForwardAction);
+		historyForwardB.setAction(AHistory.historyForwardAction);
 		historyForwardB.setBorderPainted(false);
 		historyForwardB.setFocusable(false);
 		historyForwardB.setPreferredSize(new Dimension(24, 24));
@@ -116,21 +116,21 @@ public class AgendaPanel extends JPanel {
 					refresh(d);
 			}
 		});
-		CurrentProject.addProjectListener(new ProjectListener() {
+		ACurrentProject.addProjectListener(new IProjectListener() {
 
 			public void projectChange(
-					Project prj,
-					NoteList nl,
-					TaskList tl,
-					ResourcesList rl) {
+					AProject prj,
+					INoteList nl,
+					ITaskList tl,
+					IResourcesList rl) {
 			}
 
 			public void projectWasChanged() {
 				if (isActive)
 					refresh(CurrentDate.get());
 			}});
-		EventsScheduler.addListener(new EventNotificationListener() {
-			public void eventIsOccured(main.java.memoranda.Event ev) {
+		AEventsScheduler.addListener(new IEventNotificationListener() {
+			public void eventIsOccured(main.java.memoranda.interfaces.AEvent ev) {
 				if (isActive)
 					refresh(CurrentDate.get());
 			}
@@ -174,11 +174,11 @@ public class AgendaPanel extends JPanel {
 						parentPanel.alarmB_actionPerformed(null);
 					else if (d.startsWith("memoranda:tasks")) {
 						String id = d.split("#")[1];
-						CurrentProject.set(ProjectManager.getProject(id));
+						ACurrentProject.set(AProjectManager.getProject(id));
 						parentPanel.taskB_actionPerformed(null);
 					} else if (d.startsWith("memoranda:project")) {
 						String id = d.split("#")[1];
-						CurrentProject.set(ProjectManager.getProject(id));
+						ACurrentProject.set(AProjectManager.getProject(id));
 					} else if (d.startsWith("memoranda:removesticker")) {
                         String id = d.split("#")[1];
                         StickerConfirmation stc = new StickerConfirmation(App.getFrame());
@@ -191,7 +191,7 @@ public class AgendaPanel extends JPanel {
                                         + loc.y);
                         stc.setVisible(true);
                         if (!stc.CANCELLED) {
-                        EventsManager.removeSticker(id);
+                        AEventsManager.removeSticker(id);
                         CurrentStorage.get().storeEventsManager();}
                         refresh(CurrentDate.get());
 					} else if (d.startsWith("memoranda:addsticker")) {
@@ -209,7 +209,7 @@ public class AgendaPanel extends JPanel {
 							int sP = dlg.getPriority();
 							txt = txt.replaceAll("\\n", "<br>");
                             txt = "<div style=\"background-color:"+dlg.getStickerColor()+";font-size:"+dlg.getStickerTextSize()+";color:"+dlg.getStickerTextColor()+"; \">"+txt+"</div>";
-							EventsManager.createSticker(txt, sP);
+							AEventsManager.createSticker(txt, sP);
 							CurrentStorage.get().storeEventsManager();
 						}
 						refresh(CurrentDate.get());
@@ -226,7 +226,7 @@ public class AgendaPanel extends JPanel {
 						refresh(CurrentDate.get());
 					} else if (d.startsWith("memoranda:expandsticker")) {
 						String id = d.split("#")[1];
-						Element pre_sticker=(Element)((Map)EventsManager.getStickers()).get(id);
+						Element pre_sticker=(Element)((Map)AEventsManager.getStickers()).get(id);
 						String sticker = pre_sticker.getValue();
 						int first=sticker.indexOf(">");
 						int last=sticker.lastIndexOf("<");
@@ -248,7 +248,7 @@ public class AgendaPanel extends JPanel {
 						dlg.setVisible(true);
 					}else if (d.startsWith("memoranda:editsticker")) {
 						String id = d.split("#")[1];
-						Element pre_sticker=(Element)((Map)EventsManager.getStickers()).get(id);
+						Element pre_sticker=(Element)((Map)AEventsManager.getStickers()).get(id);
 						String sticker = pre_sticker.getValue();
 						sticker=sticker.replaceAll("<br>","\n");
 						int first=sticker.indexOf(">");
@@ -273,8 +273,8 @@ public class AgendaPanel extends JPanel {
 							sP = dlg.getPriority();
 							txt = txt.replaceAll("\\n", "<br>");
 							txt = "<div style=\"background-color:"+dlg.getStickerColor()+";font-size:"+dlg.getStickerTextSize()+";color:"+dlg.getStickerTextColor()+";\">"+txt+"</div>";
-							EventsManager.removeSticker(id);
-							EventsManager.createSticker(txt, sP);
+							AEventsManager.removeSticker(id);
+							AEventsManager.createSticker(txt, sP);
 							CurrentStorage.get().storeEventsManager();
 						 }
 						 refresh(CurrentDate.get());

@@ -22,24 +22,24 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import main.java.memoranda.CurrentNote;
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.EventNotificationListener;
-import main.java.memoranda.EventsScheduler;
-import main.java.memoranda.History;
-import main.java.memoranda.HistoryItem;
-import main.java.memoranda.HistoryListener;
-import main.java.memoranda.Note;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.NoteListener;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectListener;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.Task;
-import main.java.memoranda.TaskList;
 import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.date.CurrentDate;
 import main.java.memoranda.date.DateListener;
+import main.java.memoranda.interfaces.ACurrentNote;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.IEventNotificationListener;
+import main.java.memoranda.interfaces.AEventsScheduler;
+import main.java.memoranda.interfaces.AHistory;
+import main.java.memoranda.interfaces.AHistoryItem;
+import main.java.memoranda.interfaces.IHistoryListener;
+import main.java.memoranda.interfaces.INote;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.INoteListener;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITask;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.util.CurrentStorage;
 import main.java.memoranda.util.Local;
 import main.java.memoranda.util.Util;
@@ -70,7 +70,7 @@ public class DailyItemsPanel extends JPanel {
     ImageIcon bookmarkIcon = new ImageIcon(main.java.memoranda.ui.AppFrame.class.getResource("/ui/icons/star8.png"));
     boolean expanded = true;
 
-    Note currentNote;
+    INote currentNote;
 	CalendarDate currentDate;
 
     boolean calendarIgnoreChange = false;
@@ -221,8 +221,8 @@ public class DailyItemsPanel extends JPanel {
             }
         });
 
-        CurrentProject.addProjectListener(new ProjectListener() {
-            public void projectChange(Project p, NoteList nl, TaskList tl, ResourcesList rl) {
+        ACurrentProject.addProjectListener(new IProjectListener() {
+            public void projectChange(AProject p, INoteList nl, ITaskList tl, IResourcesList rl) {
 //            	Util.debug("DailyItemsPanel Project Listener: Project is going to be changed!");				
 //            	Util.debug("current project is " + CurrentProject.get().getTitle());
 
@@ -233,8 +233,8 @@ public class DailyItemsPanel extends JPanel {
 //            	Util.debug("current project is " + CurrentProject.get().getTitle());
             	
             	// cannot save note here, changing to new project
-            	currentNote = CurrentProject.getNoteList().getNoteForDate(CurrentDate.get());
-        		CurrentNote.set(currentNote,false);
+            	currentNote = ACurrentProject.getNoteList().getNoteForDate(CurrentDate.get());
+        		ACurrentNote.set(currentNote,false);
                 editorPanel.setDocument(currentNote);        
                 
 //                // DEBUG
@@ -248,8 +248,8 @@ public class DailyItemsPanel extends JPanel {
             }
         });
 
-        CurrentNote.addNoteListener(new NoteListener() {
-            public void noteChange(Note note, boolean toSaveCurrentNote) {
+        ACurrentNote.addNoteListener(new INoteListener() {
+            public void noteChange(INote note, boolean toSaveCurrentNote) {
                 currentNoteChanged(note, toSaveCurrentNote);
             }
         });
@@ -268,19 +268,19 @@ public class DailyItemsPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (editorPanel.isDocumentChanged()) {
                     saveNote();
-                    CurrentStorage.get().storeNoteList(CurrentProject.getNoteList(), CurrentProject.get());
+                    CurrentStorage.get().storeNoteList(ACurrentProject.getNoteList(), ACurrentProject.get());
                 }
             }
         });
 
-        History.addHistoryListener(new HistoryListener() {
-            public void historyWasRolledTo(HistoryItem hi) {
+        AHistory.addHistoryListener(new IHistoryListener() {
+            public void historyWasRolledTo(AHistoryItem hi) {
                 historyChanged(hi);
             }
         });
 
-        EventsScheduler.addListener(new EventNotificationListener() {
-            public void eventIsOccured(main.java.memoranda.Event ev) {
+        AEventsScheduler.addListener(new IEventNotificationListener() {
+            public void eventIsOccured(main.java.memoranda.interfaces.AEvent ev) {
                 /*DEBUG*/
                 System.out.println(ev.getTimeString() + " " + ev.getText());
                 updateIndicators();
@@ -292,16 +292,16 @@ public class DailyItemsPanel extends JPanel {
         });
 
 		currentDate = CurrentDate.get();
-        currentNote = CurrentProject.getNoteList().getNoteForDate(CurrentDate.get());
-		CurrentNote.set(currentNote,true);
+        currentNote = ACurrentProject.getNoteList().getNoteForDate(CurrentDate.get());
+		ACurrentNote.set(currentNote,true);
         editorPanel.setDocument(currentNote);
-        History.add(new HistoryItem(CurrentDate.get(), CurrentProject.get()));
+        AHistory.add(new AHistoryItem(CurrentDate.get(), ACurrentProject.get()));
         cmainPanel.add(mainTabsPanel, BorderLayout.CENTER);
         mainTabsPanel.add(eventsTabbedPane, "EVENTSTAB");
         mainTabsPanel.add(tasksTabbedPane, "TASKSTAB");
         mainTabsPanel.add(notesControlPane, "NOTESTAB");
 		mainTabsPanel.add(agendaTabbedPane, "AGENDATAB");
-        updateIndicators(CurrentDate.get(), CurrentProject.getTaskList());
+        updateIndicators(CurrentDate.get(), ACurrentProject.getTaskList());
         mainPanel.setBorder(null);
     }
 
@@ -311,7 +311,7 @@ public class DailyItemsPanel extends JPanel {
         Cursor cur = App.getFrame().getCursor();
         App.getFrame().setCursor(waitCursor);
         if (!changedByHistory) {
-           History.add(new HistoryItem(newdate, CurrentProject.get()));
+           AHistory.add(new AHistoryItem(newdate, ACurrentProject.get()));
 		}
         if (!dateChangedByCalendar) {
             calendarIgnoreChange = true;
@@ -322,8 +322,8 @@ public class DailyItemsPanel extends JPanel {
         /*if ((currentNote != null) && !changedByHistory && !addedToHistory)
                             History.add(new HistoryItem(currentNote));*/
 		currentNoteChanged(currentNote,true);
-		currentNote = CurrentProject.getNoteList().getNoteForDate(newdate);
- 		CurrentNote.set(currentNote,true);
+		currentNote = ACurrentProject.getNoteList().getNoteForDate(newdate);
+ 		ACurrentNote.set(currentNote,true);
 		currentDate = CurrentDate.get();
 
         /*addedToHistory = false;
@@ -343,11 +343,11 @@ public class DailyItemsPanel extends JPanel {
             currentDateLabel.setIcon(null);
         }		
 
-        updateIndicators(newdate, CurrentProject.getTaskList());
+        updateIndicators(newdate, ACurrentProject.getTaskList());
         App.getFrame().setCursor(cur);
     }
 
-	void currentNoteChanged(Note note, boolean toSaveCurrentNote) {
+	void currentNoteChanged(INote note, boolean toSaveCurrentNote) {
 //		Util.debug("currentNoteChanged");
 		
 		if (editorPanel.isDocumentChanged()) {
@@ -362,18 +362,18 @@ public class DailyItemsPanel extends JPanel {
 		editorPanel.editor.requestFocus();		
 	}
 	
-    void currentProjectChanged(Project newprj, NoteList nl, TaskList tl, ResourcesList rl) {
+    void currentProjectChanged(AProject newprj, INoteList nl, ITaskList tl, IResourcesList rl) {
 //		Util.debug("currentProjectChanged");
 
         Cursor cur = App.getFrame().getCursor();
         App.getFrame().setCursor(waitCursor);
         if (!changedByHistory)
-            History.add(new HistoryItem(CurrentDate.get(), newprj));
+            AHistory.add(new AHistoryItem(CurrentDate.get(), newprj));
         if (editorPanel.isDocumentChanged())
             saveNote();
         /*if ((currentNote != null) && !changedByHistory && !addedToHistory)
                     History.add(new HistoryItem(currentNote));*/
-        CurrentProject.save();        
+        ACurrentProject.save();        
         
         /*addedToHistory = false;
         if (!changedByHistory) {
@@ -387,16 +387,16 @@ public class DailyItemsPanel extends JPanel {
         App.getFrame().setCursor(cur);
     }
 
-    void historyChanged(HistoryItem hi) {
+    void historyChanged(AHistoryItem hi) {
         changedByHistory = true;
-        CurrentProject.set(hi.getProject());
+        ACurrentProject.set(hi.getProject());
         CurrentDate.set(hi.getDate());
         changedByHistory = false;
     }
 
     public void saveNote() {
         if (currentNote == null)
-            currentNote = CurrentProject.getNoteList().createNoteForDate(currentDate);
+            currentNote = ACurrentProject.getNoteList().createNoteForDate(currentDate);
         currentNote.setTitle(editorPanel.titleField.getText());
 		currentNote.setId(Util.generateId());
         CurrentStorage.get().storeNote(currentNote, editorPanel.getDocument());
@@ -421,18 +421,18 @@ public class DailyItemsPanel extends JPanel {
         }
     }
 
-    public void updateIndicators(CalendarDate date, TaskList tl) {
+    public void updateIndicators(CalendarDate date, ITaskList tl) {
         indicatorsPanel.removeAll();
         if (date.equals(CalendarDate.today())) {
             if (tl.getActiveSubTasks(null,date).size() > 0)
                 indicatorsPanel.add(taskB, null);
-            if (EventsScheduler.isEventScheduled()) {
+            if (AEventsScheduler.isEventScheduled()) {
                 /*String evlist = "";
                 for (Iterator it = EventsScheduler.getScheduledEvents().iterator(); it.hasNext();) {
                     net.sf.memoranda.Event ev = (net.sf.memoranda.Event)it.next();   
                     evlist += ev.getTimeString()+" - "+ev.getText()+"\n";
                 } */
-                main.java.memoranda.Event ev = EventsScheduler.getFirstScheduledEvent();
+                main.java.memoranda.interfaces.AEvent ev = AEventsScheduler.getFirstScheduledEvent();
                 alarmB.setToolTipText(ev.getTimeString() + " - " + ev.getText());
                 indicatorsPanel.add(alarmB, null);
             }
@@ -441,7 +441,7 @@ public class DailyItemsPanel extends JPanel {
     }
 
     public void updateIndicators() {
-        updateIndicators(CurrentDate.get(), CurrentProject.getTaskList());
+        updateIndicators(CurrentDate.get(), ACurrentProject.getTaskList());
     }
 
     public void selectPanel(String pan) {
@@ -450,8 +450,8 @@ public class DailyItemsPanel extends JPanel {
          //   calendar.jnCalendar.updateUI();
         }
         if (pan.equals("TASKS") && (tasksPanel.taskTable.getSelectedRow() > -1)) {
-            Task t =
-                CurrentProject.getTaskList().getTask(
+            ITask t =
+                ACurrentProject.getTaskList().getTask(
                     tasksPanel
                         .taskTable
                         .getModel()

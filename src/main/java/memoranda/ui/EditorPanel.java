@@ -26,10 +26,10 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 
-import main.java.memoranda.CurrentNote;
-import main.java.memoranda.History;
-import main.java.memoranda.Note;
 import main.java.memoranda.date.CurrentDate;
+import main.java.memoranda.interfaces.ACurrentNote;
+import main.java.memoranda.interfaces.AHistory;
+import main.java.memoranda.interfaces.INote;
 import main.java.memoranda.ui.htmleditor.HTMLEditor;
 import main.java.memoranda.util.Configuration;
 import main.java.memoranda.util.Context;
@@ -214,7 +214,7 @@ public class EditorPanel extends JPanel {
 		copyB.setFocusable(false);
 		copyB.setText("");
 
-		historyBackB.setAction(History.historyBackAction);
+		historyBackB.setAction(AHistory.historyBackAction);
 		historyBackB.setMaximumSize(new Dimension(24, 24));
 		historyBackB.setMinimumSize(new Dimension(24, 24));
 		historyBackB.setPreferredSize(new Dimension(24, 24));
@@ -224,7 +224,7 @@ public class EditorPanel extends JPanel {
 		historyBackB.setFocusable(false);
 		historyBackB.setText("");
 
-		historyForwardB.setAction(History.historyForwardAction);
+		historyForwardB.setAction(AHistory.historyForwardAction);
 		historyForwardB.setBorderPainted(false);
 		historyForwardB.setFocusable(false);
 		historyForwardB.setPreferredSize(new Dimension(24, 24));
@@ -489,13 +489,13 @@ public class EditorPanel extends JPanel {
 		if (ei == 1)
 			enc = "UTF-8";
 		File f = chooser.getSelectedFile();
-		new HTMLFileExport(f, editor.document, CurrentNote.get(), enc,
+		new HTMLFileExport(f, editor.document, ACurrentNote.get(), enc,
 				dlg.numentChB.isSelected(), template, dlg.xhtmlChB.isSelected());
 	}
 
 	String initialTitle = "";
 
-	public void setDocument(Note note) {
+	public void setDocument(INote note) {
 		// Note note = CurrentProject.getNoteList().getActiveNote();
 		// try {
 		// this.editor.editor.setPage(CurrentStorage.get().getNoteURL(note));
@@ -571,7 +571,7 @@ public class EditorPanel extends JPanel {
 	}
 
 	void newB_actionPerformed(ActionEvent e) {
-		CurrentNote.set(null, true);
+		ACurrentNote.set(null, true);
 		setDocument(null);
 		this.titleField.requestFocus();
 	}
@@ -580,7 +580,7 @@ public class EditorPanel extends JPanel {
 		File f;
 		try {
 			f = Util.getTempFile();
-			new HTMLFileExport(f, editor.document, CurrentNote.get(), "UTF-8",
+			new HTMLFileExport(f, editor.document, ACurrentNote.get(), "UTF-8",
 					false, null, false);
 			Util.runBrowser("file:" + f.getAbsolutePath());
 		} catch (IOException ioe) {

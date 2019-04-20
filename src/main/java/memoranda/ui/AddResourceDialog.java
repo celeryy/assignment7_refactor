@@ -64,7 +64,7 @@ public class AddResourceDialog extends JDialog {
 	 
     void jbInit() throws Exception {
 		this.setResizable(false);
-        dialogTitlePanel.setBackground(Color.WHITE);
+        dialogTitlePanel.setBackground(Color.YELLOW);
         dialogTitlePanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         header.setFont(new java.awt.Font("Dialog", 0, 20));
         header.setForeground(new Color(0, 0, 124));

@@ -13,13 +13,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectListener;
-import main.java.memoranda.Resource;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.TaskList;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.AResource;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.ui.table.TableSorter;
 import main.java.memoranda.util.Local;
 import main.java.memoranda.util.MimeType;
@@ -43,8 +43,8 @@ public class ResourcesTable extends JTable {
         this.setFont(new Font("Dialog",0,11));
         initColumsWidth();
         //this.setModel(new ResourcesTableModel());
-        CurrentProject.addProjectListener(new ProjectListener() {
-            public void projectChange(Project p, NoteList nl, TaskList tl, ResourcesList rl) {                
+        ACurrentProject.addProjectListener(new IProjectListener() {
+            public void projectChange(AProject p, INoteList nl, ITaskList tl, IResourcesList rl) {                
                
             }
             public void projectWasChanged() {
@@ -74,10 +74,10 @@ public class ResourcesTable extends JTable {
     }
 
     public void initTable() {
-        Vector v = CurrentProject.getResourcesList().getAllResources();
+        Vector v = ACurrentProject.getResourcesList().getAllResources();
         files = new Vector();
         for (int i = 0; i < v.size(); i++) {
-            Resource r = (Resource)v.get(i);
+            AResource r = (AResource)v.get(i);
             if (!r.isInetShortcut()) {
                 File f = new File(r.getPath());
                 if (f.isFile())
@@ -105,7 +105,7 @@ public class ResourcesTable extends JTable {
 
                 comp = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (column == 0) {
-                  Resource r = (Resource)getModel().getValueAt(row, _RESOURCE);
+                  AResource r = (AResource)getModel().getValueAt(row, _RESOURCE);
                   if (!r.isInetShortcut())  
                     comp.setIcon(MimeTypesList.getMimeTypeForFile((String)value).getIcon());
                   else 
@@ -140,7 +140,7 @@ public class ResourcesTable extends JTable {
        
         
         public Object getValueAt(int row, int col) {
-            Resource r = (Resource)files.get(row);
+            AResource r = (AResource)files.get(row);
             if (col == _RESOURCE)
                 return r;
             if (!r.isInetShortcut())  {

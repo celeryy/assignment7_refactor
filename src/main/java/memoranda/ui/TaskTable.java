@@ -51,6 +51,12 @@ import main.java.memoranda.*;
 import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.date.CurrentDate;
 import main.java.memoranda.date.DateListener;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.ui.treetable.*;
 import main.java.memoranda.util.*;
 
@@ -108,9 +114,9 @@ public class TaskTable extends JTable {
                 tableChanged();
             }
         });
-        CurrentProject.addProjectListener(new ProjectListener() {
-            public void projectChange(Project p, NoteList nl, TaskList tl,
-                    ResourcesList rl) {
+        ACurrentProject.addProjectListener(new IProjectListener() {
+            public void projectChange(AProject p, INoteList nl, ITaskList tl,
+                    IResourcesList rl) {
             }
 
             public void projectWasChanged() {

@@ -35,8 +35,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import main.java.memoranda.CurrentProject;
 import main.java.memoranda.date.CalendarDate;
+import main.java.memoranda.interfaces.ACurrentProject;
 import main.java.memoranda.util.Local;
 
 import javax.swing.JCheckBox;
@@ -103,8 +103,8 @@ public class TaskDialog extends JDialog {
 	JSpinner progress = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
 	
 	//Forbid to set dates outside the bounds
-	CalendarDate startDateMin = CurrentProject.get().getStartDate();
-	CalendarDate startDateMax = CurrentProject.get().getEndDate();
+	CalendarDate startDateMin = ACurrentProject.get().getStartDate();
+	CalendarDate startDateMax = ACurrentProject.get().getEndDate();
 	CalendarDate endDateMin = startDateMin;
 	CalendarDate endDateMax = startDateMax;
     

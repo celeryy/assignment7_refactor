@@ -25,6 +25,9 @@ import javax.swing.tree.TreePath;
 
 import main.java.memoranda.*;
 import main.java.memoranda.date.CurrentDate;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.ITask;
 import main.java.memoranda.ui.treetable.AbstractTreeTableModel;
 import main.java.memoranda.ui.treetable.TreeTableModel;
 import main.java.memoranda.util.Context;
@@ -56,7 +59,7 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
      * @param root
      */
     public TaskTableModel(){
-        super(CurrentProject.get());
+        super(ACurrentProject.get());
     }
 
     /**
@@ -78,9 +81,9 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
      *      int)
      */
     public Object getValueAt(Object node, int column) {
-        if (node instanceof Project)
+        if (node instanceof AProject)
             return null;
-        Task t = (Task) node;
+        ITask t = (ITask) node;
         switch (column) {
         case 0:
             return "";
@@ -110,19 +113,19 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
 
     String getStatusString(int status) {
         switch (status) {
-        case Task.ACTIVE:
+        case ITask.ACTIVE:
             return Local.getString("Active");
-        case Task.DEADLINE:
+        case ITask.DEADLINE:
             return Local.getString("Deadline");
-        case Task.COMPLETED:
+        case ITask.COMPLETED:
             return Local.getString("Completed");
-        case Task.FAILED:
+        case ITask.FAILED:
             return Local.getString("Failed");
-        case Task.FROZEN:
+        case ITask.FROZEN:
             return Local.getString("Frozen");
-        case Task.LOCKED:
+        case ITask.LOCKED:
             return Local.getString("Locked");
-        case Task.SCHEDULED:
+        case ITask.SCHEDULED:
             return Local.getString("Scheduled");
         }
         return "";
@@ -130,15 +133,15 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
 
     String getPriorityString(int p) {
         switch (p) {
-        case Task.PRIORITY_NORMAL:
+        case ITask.PRIORITY_NORMAL:
             return Local.getString("Normal");
-        case Task.PRIORITY_LOW:
+        case ITask.PRIORITY_LOW:
             return Local.getString("Low");
-        case Task.PRIORITY_LOWEST:
+        case ITask.PRIORITY_LOWEST:
             return Local.getString("Lowest");
-        case Task.PRIORITY_HIGH:
+        case ITask.PRIORITY_HIGH:
             return Local.getString("High");
-        case Task.PRIORITY_HIGHEST:
+        case ITask.PRIORITY_HIGHEST:
             return Local.getString("Highest");
         }
         return "";
@@ -148,14 +151,14 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
      * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
      */
     public int getChildCount(Object parent) {
-        if (parent instanceof Project) {
+        if (parent instanceof AProject) {
 		if( activeOnly() ){
-			return CurrentProject.getTaskList().getActiveSubTasks(null, CurrentDate.get()).size();
+			return ACurrentProject.getTaskList().getActiveSubTasks(null, CurrentDate.get()).size();
 		}
-		else return CurrentProject.getTaskList().getTopLevelTasks().size();
+		else return ACurrentProject.getTaskList().getTopLevelTasks().size();
         }
-        Task t = (Task) parent;
-        if(activeOnly()) return CurrentProject.getTaskList().getActiveSubTasks(t.getID(), CurrentDate.get()).size();
+        ITask t = (ITask) parent;
+        if(activeOnly()) return ACurrentProject.getTaskList().getActiveSubTasks(t.getID(), CurrentDate.get()).size();
 	else return t.getSubTasks().size();
     }
 
@@ -163,11 +166,11 @@ public class TaskTableModel extends AbstractTreeTableModel implements TreeTableM
      * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
      */
     public Object getChild(Object parent, int index) {
-        if (parent instanceof Project)
-            if( activeOnly() ) return CurrentProject.getTaskList().getActiveSubTasks(null, CurrentDate.get()).toArray()[index];
-	    else return CurrentProject.getTaskList().getTopLevelTasks().toArray()[index];
-        Task t = (Task) parent;
-        if(activeOnly()) return CurrentProject.getTaskList().getActiveSubTasks(t.getID(), CurrentDate.get()).toArray()[index];
+        if (parent instanceof AProject)
+            if( activeOnly() ) return ACurrentProject.getTaskList().getActiveSubTasks(null, CurrentDate.get()).toArray()[index];
+	    else return ACurrentProject.getTaskList().getTopLevelTasks().toArray()[index];
+        ITask t = (ITask) parent;
+        if(activeOnly()) return ACurrentProject.getTaskList().getActiveSubTasks(t.getID(), CurrentDate.get()).toArray()[index];
 	else return t.getSubTasks().toArray()[index];
     }
 

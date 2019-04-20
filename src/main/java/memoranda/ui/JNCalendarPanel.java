@@ -25,14 +25,14 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectListener;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.TaskList;
 import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.date.CurrentDate;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.util.Local;
 
 /**
@@ -168,7 +168,7 @@ public class JNCalendarPanel extends JPanel {
     navbPanel.setPreferredSize(new Dimension(155, 30));
     jnCalendar.getTableHeader().setFont(new java.awt.Font("Dialog", 1, 10));
     jnCalendar.setFont(new java.awt.Font("Dialog", 0, 10));
-    jnCalendar.setGridColor(Color.lightGray);
+    jnCalendar.setGridColor(Color.magenta);
     jnCalendarPanel.setLayout(borderLayout5);
     todayBPanel.setMinimumSize(new Dimension(68, 24));
     todayBPanel.setOpaque(false);
@@ -212,8 +212,8 @@ public class JNCalendarPanel extends JPanel {
         yearSpin_actionPerformed();
       }
     });
-    CurrentProject.addProjectListener(new ProjectListener() {
-            public void projectChange(Project p, NoteList nl, TaskList tl, ResourcesList rl) {}
+    ACurrentProject.addProjectListener(new IProjectListener() {
+            public void projectChange(AProject p, INoteList nl, ITaskList tl, IResourcesList rl) {}
             public void projectWasChanged() {
                 jnCalendar.updateUI();
             }

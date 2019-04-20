@@ -16,10 +16,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.EventsManager;
-import main.java.memoranda.Task;
 import main.java.memoranda.date.CalendarDate;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AEventsManager;
+import main.java.memoranda.interfaces.ITask;
 /**
  *
  */
@@ -28,13 +28,13 @@ public class JNCalendarCellRenderer extends javax.swing.table.DefaultTableCellRe
     private CalendarDate d = null;
     boolean disabled = false;
     ImageIcon evIcon = new ImageIcon(main.java.memoranda.ui.AppFrame.class.getResource("/ui/icons/en.png"));
-    Task t = null;
+    ITask t = null;
     
-    public void setTask(Task _t) {
+    public void setTask(ITask _t) {
         t = _t;
     }
     
-    public Task getTask() {
+    public ITask getTask() {
         return t;
     }
 
@@ -57,8 +57,8 @@ public class JNCalendarCellRenderer extends javax.swing.table.DefaultTableCellRe
         }
         
 		if (!isSelected) {
-			CalendarDate cpsd = CurrentProject.get().getStartDate();
-            CalendarDate cped = CurrentProject.get().getEndDate();
+			CalendarDate cpsd = ACurrentProject.get().getStartDate();
+            CalendarDate cped = ACurrentProject.get().getEndDate();
             if (!(((d.after(cpsd)) && (d.before(cped))) || (d.equals(cpsd)) || (d.equals(cped)))) {
 				label.setBackground(new Color(0xF0,0xF0,0xF0));
 				return label;
@@ -92,18 +92,18 @@ public class JNCalendarCellRenderer extends javax.swing.table.DefaultTableCellRe
 				label.setBackground( new Color(230, 255, 230));
 		
 		else if(currentPanel.equals("NOTES") && 
-		CurrentProject.getNoteList().getNoteForDate(d) != null) 
+		ACurrentProject.getNoteList().getNoteForDate(d) != null) 
 					label.setBackground(new Color(255,245,200));
 		
 		else if(currentPanel.equals("EVENTS") && 
-		(!(EventsManager.getEventsForDate(d).isEmpty()))) 
+		(!(AEventsManager.getEventsForDate(d).isEmpty()))) 
 					label.setBackground(new Color(255,230,230));
 		
 		else if(!isSelected)
 			label.setBackground(Color.WHITE);
 				
 		// always display NREvents
-		if (EventsManager.isNREventsForDate(d))
+		if (AEventsManager.isNREventsForDate(d))
 			label.setIcon(evIcon);
 		else
 			label.setIcon(null);

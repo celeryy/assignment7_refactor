@@ -6,6 +6,9 @@ import javax.swing.tree.*;
 
 import main.java.memoranda.*;
 import main.java.memoranda.date.*;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.ITask;
 import main.java.memoranda.util.*;
 
 import javax.swing.event.*;
@@ -26,12 +29,12 @@ public class TaskTableSorter extends TaskTableModel{
 	Comparator comparator = new Comparator(){
 		public int compare(Object o1, Object o2){
 			if(sorting_column == -1) return 0;
-			if( (o1 instanceof Task) == false) return 0;
-			if( (o2 instanceof Task) == false ) return 0;
+			if( (o1 instanceof ITask) == false) return 0;
+			if( (o2 instanceof ITask) == false ) return 0;
 			
 			
-			Task task1 = (Task) o1;
-			Task task2 = (Task) o2;
+			ITask task1 = (ITask) o1;
+			ITask task2 = (ITask) o2;
 			
 			// based on TaskTableModel.columnNames
 			switch(sorting_column){
@@ -57,13 +60,13 @@ public class TaskTableSorter extends TaskTableModel{
 	public Object getChild(Object parent, int index) {
 		Collection c = null;
 		
-		if (parent instanceof Project){
-			if( activeOnly() ) c = CurrentProject.getTaskList().getActiveSubTasks(null, CurrentDate.get());
-			else c = CurrentProject.getTaskList().getTopLevelTasks();
+		if (parent instanceof AProject){
+			if( activeOnly() ) c = ACurrentProject.getTaskList().getActiveSubTasks(null, CurrentDate.get());
+			else c = ACurrentProject.getTaskList().getTopLevelTasks();
 		}
 		else{
-			Task t = (Task) parent;
-			if(activeOnly()) c = CurrentProject.getTaskList().getActiveSubTasks(t.getID(), CurrentDate.get());
+			ITask t = (ITask) parent;
+			if(activeOnly()) c = ACurrentProject.getTaskList().getActiveSubTasks(t.getID(), CurrentDate.get());
 			else c = t.getSubTasks();
 		}
 		

@@ -34,15 +34,15 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLDocument;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.History;
-import main.java.memoranda.Note;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectListener;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.TaskList;
 import main.java.memoranda.date.CurrentDate;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AHistory;
+import main.java.memoranda.interfaces.INote;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.IProjectListener;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.ITaskList;
 import main.java.memoranda.ui.htmleditor.HTMLEditor;
 import main.java.memoranda.util.Configuration;
 import main.java.memoranda.util.Context;
@@ -56,11 +56,6 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
 
-
-/**
- * 
- * Copyright (c) 2003 Memoranda Team. http://memoranda.sf.net
- */
 
 /*$Id: AppFrame.java,v 1.33 2005/07/05 08:17:24 alexeya Exp $*/
 
@@ -223,8 +218,8 @@ public class AppFrame extends JFrame {
     JMenuItem jMenuFormatTableInsR = new JMenuItem(editor.insertTableRowAction);
     JMenuItem jMenuFormatTableInsC = new JMenuItem(editor.insertTableCellAction);
     JMenuItem jMenuFormatProperties = new JMenuItem(editor.propsAction);
-    JMenuItem jMenuGoHBack = new JMenuItem(History.historyBackAction);
-    JMenuItem jMenuGoFwd = new JMenuItem(History.historyForwardAction);
+    JMenuItem jMenuGoHBack = new JMenuItem(AHistory.historyBackAction);
+    JMenuItem jMenuGoFwd = new JMenuItem(AHistory.historyForwardAction);
 
     JMenuItem jMenuGoDayBack = new JMenuItem(
             workPanel.dailyItemsPanel.calendar.dayBackAction);
@@ -257,12 +252,12 @@ public class AppFrame extends JFrame {
     //Component initialization
     private void jbInit() throws Exception {
         this.setIconImage(new ImageIcon(AppFrame.class.getResource(
-                "/ui/icons/jnotes16.png"))
+        		"/ui/icons/jnotes16.png"))
                 .getImage());
         contentPane = (JPanel) this.getContentPane();
         contentPane.setLayout(borderLayout1);
         //this.setSize(new Dimension(800, 500));
-        this.setTitle("Memoranda - " + CurrentProject.get().getTitle());
+        this.setTitle("Memoranda - " + ACurrentProject.get().getTitle());
         //Added a space to App.VERSION_INFO to make it look some nicer
         statusBar.setText(" Version:" + App.VERSION_INFO + " (Build "
                 + App.BUILD_INFO + " )");
@@ -278,7 +273,7 @@ public class AppFrame extends JFrame {
         
         jMenuHelpGuide.setText(Local.getString("Online user's guide"));
         jMenuHelpGuide.setIcon(new ImageIcon(AppFrame.class.getResource(
-                "/ui/icons/help.png")));
+        		"/ui/icons/help.png")));
         jMenuHelpGuide.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 jMenuHelpGuide_actionPerformed(e);
@@ -287,7 +282,7 @@ public class AppFrame extends JFrame {
         
         jMenuHelpWeb.setText(Local.getString("Memoranda web site"));
         jMenuHelpWeb.setIcon(new ImageIcon(AppFrame.class.getResource(
-                "/ui/icons/web.png")));
+        		"/ui/icons/web.png")));
         jMenuHelpWeb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 jMenuHelpWeb_actionPerformed(e);
@@ -619,14 +614,14 @@ public class AppFrame extends JFrame {
             setEnabledEditorMenus(pan.equalsIgnoreCase("NOTES"));
         }
 
-        CurrentProject.addProjectListener(new ProjectListener() {
+        ACurrentProject.addProjectListener(new IProjectListener() {
 
-            public void projectChange(Project prj, NoteList nl, TaskList tl,
-                    ResourcesList rl) {
+            public void projectChange(AProject prj, INoteList nl, ITaskList tl,
+                    IResourcesList rl) {
             }
 
             public void projectWasChanged() {
-                setTitle("Memoranda - " + CurrentProject.get().getTitle());
+                setTitle("Memoranda - " + ACurrentProject.get().getTitle());
             }
         });
 
@@ -770,7 +765,7 @@ public class AppFrame extends JFrame {
             return;
         Context.put("LAST_SELECTED_PACK_FILE", chooser.getSelectedFile());        
         java.io.File f = chooser.getSelectedFile();
-        ProjectPackager.pack(CurrentProject.get(), f);
+        ProjectPackager.pack(ACurrentProject.get(), f);
     }
 
     public void doPrjUnPack() {
@@ -923,8 +918,8 @@ public class AppFrame extends JFrame {
                 File f = chooser.getSelectedFile();
                 boolean xhtml =
                         chooser.getFileFilter().getDescription().indexOf("XHTML") > -1;
-                 CurrentProject.save();
-                 ProjectExporter.export(CurrentProject.get(), chooser.getSelectedFile(), enc, xhtml, 
+                 ACurrentProject.save();
+                 ProjectExporter.export(ACurrentProject.get(), chooser.getSelectedFile(), enc, xhtml, 
                                  dlg.splitChB.isSelected(), true, nument, dlg.titlesAsHeadersChB.isSelected(), false); 
                 }
             
@@ -1010,7 +1005,7 @@ public class AppFrame extends JFrame {
                             content = notesContent.get(id);
                             p.setText(content);
                             HTMLDocument doc = (HTMLDocument)p.getDocument();
-                            Note note = CurrentProject.getNoteList().createNoteForDate(CurrentDate.get());
+                            INote note = ACurrentProject.getNoteList().createNoteForDate(CurrentDate.get());
                     note.setTitle(name);
                             note.setId(Util.generateId());
                     CurrentStorage.get().storeNote(note, doc);
@@ -1092,7 +1087,7 @@ public class AppFrame extends JFrame {
                             System.out.println(id+" "+name+" "+content);
                             p.setText(content);
                             HTMLDocument doc = (HTMLDocument)p.getDocument();
-                            Note note = CurrentProject.getNoteList().createNoteForDate(CurrentDate.get());
+                            INote note = ACurrentProject.getNoteList().createNoteForDate(CurrentDate.get());
                     note.setTitle(name);
                             note.setId(Util.generateId());
                     CurrentStorage.get().storeNote(note, doc);
