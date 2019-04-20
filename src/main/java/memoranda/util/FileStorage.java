@@ -19,17 +19,17 @@ import java.net.URL;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import main.java.memoranda.EventsManager;
-import main.java.memoranda.Note;
-import main.java.memoranda.NoteList;
-import main.java.memoranda.NoteListImpl;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectManager;
-import main.java.memoranda.ResourcesList;
-import main.java.memoranda.ResourcesListImpl;
-import main.java.memoranda.TaskList;
-import main.java.memoranda.TaskListImpl;
 import main.java.memoranda.date.CalendarDate;
+import main.java.memoranda.interfaces.AEventsManager;
+import main.java.memoranda.interfaces.INote;
+import main.java.memoranda.interfaces.INoteList;
+import main.java.memoranda.interfaces.INoteListImpl;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.AProjectManager;
+import main.java.memoranda.interfaces.IResourcesList;
+import main.java.memoranda.interfaces.IResourcesListImpl;
+import main.java.memoranda.interfaces.ITaskList;
+import main.java.memoranda.interfaces.ITaskListImpl;
 import main.java.memoranda.ui.ExceptionDialog;
 import main.java.memoranda.ui.htmleditor.AltHTMLWriter;
 import nu.xom.Builder;
@@ -106,9 +106,9 @@ public class FileStorage implements Storage {
     }
 
     /**
-     * @see main.java.memoranda.util.Storage#storeNote(main.java.memoranda.Note)
+     * @see main.java.memoranda.util.Storage#storeNote(main.java.memoranda.interfaces.INote)
      */
-    public void storeNote(Note note, javax.swing.text.Document doc) {
+    public void storeNote(INote note, javax.swing.text.Document doc) {
         String filename =
             JN_DOCPATH + note.getProject().getID() + File.separator;
         doc.putProperty(
@@ -158,9 +158,9 @@ public class FileStorage implements Storage {
 
     }
     /**
-     * @see main.java.memoranda.util.Storage#openNote(main.java.memoranda.Note)
+     * @see main.java.memoranda.util.Storage#openNote(main.java.memoranda.interfaces.INote)
      */
-    public javax.swing.text.Document openNote(Note note) {
+    public javax.swing.text.Document openNote(INote note) {
 
         HTMLDocument doc = (HTMLDocument) editorKit.createDefaultDocument();
         if (note == null)
@@ -209,11 +209,11 @@ public class FileStorage implements Storage {
         return doc;*/
     }
 
-    public String getNoteURL(Note note) {        
+    public String getNoteURL(INote note) {        
         return "file:" + JN_DOCPATH + note.getProject().getID() + "/" + note.getId();
     }
 
-   public String getNotePath(Note note) {
+   public String getNotePath(INote note) {
         String filename = JN_DOCPATH + note.getProject().getID() + File.separator;
 //        CalendarDate d = note.getDate();
         filename += note.getId();//d.getDay() + "-" + d.getMonth() + "-" + d.getYear();
@@ -221,7 +221,7 @@ public class FileStorage implements Storage {
    }
 
 
-    public void removeNote(Note note) {
+    public void removeNote(INote note) {
         File f = new File(getNotePath(note));
         /*DEBUG*/
         System.out.println("[DEBUG] Remove note:" + getNotePath(note));
@@ -233,13 +233,13 @@ public class FileStorage implements Storage {
      */
     public void openProjectManager() {
         if (!new File(JN_DOCPATH + ".projects").exists()) {
-            ProjectManager._doc = null;
+            AProjectManager._doc = null;
             return;
         }
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Open project manager: " + JN_DOCPATH + ".projects");
-        ProjectManager._doc = openDocument(JN_DOCPATH + ".projects");
+        AProjectManager._doc = openDocument(JN_DOCPATH + ".projects");
     }
     /**
      * @see main.java.memoranda.util.Storage#storeProjectManager(nu.xom.Document)
@@ -248,12 +248,12 @@ public class FileStorage implements Storage {
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Save project manager: " + JN_DOCPATH + ".projects");
-        saveDocument(ProjectManager._doc, JN_DOCPATH + ".projects");
+        saveDocument(AProjectManager._doc, JN_DOCPATH + ".projects");
     }
     /**
-     * @see main.java.memoranda.util.Storage#removeProject(main.java.memoranda.Project)
+     * @see main.java.memoranda.util.Storage#removeProject(main.java.memoranda.interfaces.AProject)
      */
-    public void removeProjectStorage(Project prj) {
+    public void removeProjectStorage(AProject prj) {
         String id = prj.getID();
         File f = new File(JN_DOCPATH + id);
         File[] files = f.listFiles();
@@ -262,7 +262,7 @@ public class FileStorage implements Storage {
         f.delete();
     }
 
-    public TaskList openTaskList(Project prj) {
+    public ITaskList openTaskList(AProject prj) {
         String fn = JN_DOCPATH + prj.getID() + File.separator + ".tasklist";
 
         if (documentExists(fn)) {
@@ -285,16 +285,16 @@ public class FileStorage implements Storage {
                 // reload from new file
                 tasklistDoc = openDocument(fn);
             }*/
-            return new TaskListImpl(tasklistDoc, prj);   
+            return new ITaskListImpl(tasklistDoc, prj);   
         }
         else {
             /*DEBUG*/
             System.out.println("[DEBUG] New task list created");
-            return new TaskListImpl(prj);
+            return new ITaskListImpl(prj);
         }
     }
 
-    public void storeTaskList(TaskList tasklist, Project prj) {
+    public void storeTaskList(ITaskList tasklist, AProject prj) {
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Save task list: "
@@ -307,9 +307,9 @@ public class FileStorage implements Storage {
         saveDocument(tasklistDoc,JN_DOCPATH + prj.getID() + File.separator + ".tasklist");
     }
     /**
-     * @see main.java.memoranda.util.Storage#createProjectStorage(main.java.memoranda.Project)
+     * @see main.java.memoranda.util.Storage#createProjectStorage(main.java.memoranda.interfaces.AProject)
      */
-    public void createProjectStorage(Project prj) {
+    public void createProjectStorage(AProject prj) {
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Create project dir: " + JN_DOCPATH + prj.getID());
@@ -317,9 +317,9 @@ public class FileStorage implements Storage {
         dir.mkdirs();
     }
     /**
-     * @see main.java.memoranda.util.Storage#openNoteList(main.java.memoranda.Project)
+     * @see main.java.memoranda.util.Storage#openNoteList(main.java.memoranda.interfaces.AProject)
      */
-    public NoteList openNoteList(Project prj) {
+    public INoteList openNoteList(AProject prj) {
         String fn = JN_DOCPATH + prj.getID() + File.separator + ".notes";
       //System.out.println(fn);
         if (documentExists(fn)) {
@@ -330,18 +330,18 @@ public class FileStorage implements Storage {
                     + prj.getID()
                     + File.separator
                     + ".notes");
-            return new NoteListImpl(openDocument(fn), prj);
+            return new INoteListImpl(openDocument(fn), prj);
         }
         else {
             /*DEBUG*/
             System.out.println("[DEBUG] New note list created");
-            return new NoteListImpl(prj);
+            return new INoteListImpl(prj);
         }
     }
     /**
-     * @see main.java.memoranda.util.Storage#storeNoteList(main.java.memoranda.NoteList, main.java.memoranda.Project)
+     * @see main.java.memoranda.util.Storage#storeNoteList(main.java.memoranda.interfaces.INoteList, main.java.memoranda.interfaces.AProject)
      */
-    public void storeNoteList(NoteList nl, Project prj) {
+    public void storeNoteList(INoteList nl, AProject prj) {
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Save note list: "
@@ -358,13 +358,13 @@ public class FileStorage implements Storage {
      */
     public void openEventsManager() {
         if (!new File(JN_DOCPATH + ".events").exists()) {
-            EventsManager._doc = null;
+            AEventsManager._doc = null;
             return;
         }
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Open events manager: " + JN_DOCPATH + ".events");
-        EventsManager._doc = openDocument(JN_DOCPATH + ".events");
+        AEventsManager._doc = openDocument(JN_DOCPATH + ".events");
     }
     /**
      * @see main.java.memoranda.util.Storage#storeEventsList()
@@ -373,7 +373,7 @@ public class FileStorage implements Storage {
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Save events manager: " + JN_DOCPATH + ".events");
-        saveDocument(EventsManager._doc, JN_DOCPATH + ".events");
+        saveDocument(AEventsManager._doc, JN_DOCPATH + ".events");
     }
     /**
      * @see main.java.memoranda.util.Storage#openMimeTypesList()
@@ -409,25 +409,25 @@ public class FileStorage implements Storage {
         saveDocument(MimeTypesList._doc, JN_DOCPATH + ".mimetypes");
     }
     /**
-     * @see main.java.memoranda.util.Storage#openResourcesList(main.java.memoranda.Project)
+     * @see main.java.memoranda.util.Storage#openResourcesList(main.java.memoranda.interfaces.AProject)
      */
-    public ResourcesList openResourcesList(Project prj) {
+    public IResourcesList openResourcesList(AProject prj) {
         String fn = JN_DOCPATH + prj.getID() + File.separator + ".resources";
         if (documentExists(fn)) {
             /*DEBUG*/
             System.out.println("[DEBUG] Open resources list: " + fn);
-            return new ResourcesListImpl(openDocument(fn), prj);
+            return new IResourcesListImpl(openDocument(fn), prj);
         }
         else {
             /*DEBUG*/
             System.out.println("[DEBUG] New note list created");
-            return new ResourcesListImpl(prj);
+            return new IResourcesListImpl(prj);
         }
     }
     /**
-     * @see main.java.memoranda.util.Storage#storeResourcesList(main.java.memoranda.ResourcesList, main.java.memoranda.Project)
+     * @see main.java.memoranda.util.Storage#storeResourcesList(main.java.memoranda.interfaces.IResourcesList, main.java.memoranda.interfaces.AProject)
      */
-    public void storeResourcesList(ResourcesList rl, Project prj) {
+    public void storeResourcesList(IResourcesList rl, AProject prj) {
         /*DEBUG*/
         System.out.println(
             "[DEBUG] Save resources list: "

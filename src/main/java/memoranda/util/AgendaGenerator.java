@@ -12,15 +12,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import main.java.memoranda.CurrentProject;
-import main.java.memoranda.Event;
-import main.java.memoranda.EventsManager;
-import main.java.memoranda.EventsScheduler;
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectManager;
-import main.java.memoranda.Task;
-import main.java.memoranda.TaskList;
 import main.java.memoranda.date.CalendarDate;
+import main.java.memoranda.interfaces.ACurrentProject;
+import main.java.memoranda.interfaces.AEvent;
+import main.java.memoranda.interfaces.AEventsManager;
+import main.java.memoranda.interfaces.AEventsScheduler;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.AProjectManager;
+import main.java.memoranda.interfaces.ITask;
+import main.java.memoranda.interfaces.ITaskList;
 
 import java.util.Collections;
 
@@ -46,10 +46,10 @@ public class AgendaGenerator {
 					+ "<tr>\n";
 	static String FOOTER = "</td></tr></table></body></html>";
 
-	static String generateTasksInfo(Project p, CalendarDate date, Collection expandedTasks) {    	    	
-		TaskList tl;
-		if (p.getID().equals(CurrentProject.get().getID())) {
-			tl = CurrentProject.getTaskList();        	
+	static String generateTasksInfo(AProject p, CalendarDate date, Collection expandedTasks) {    	    	
+		ITaskList tl;
+		if (p.getID().equals(ACurrentProject.get().getID())) {
+			tl = ACurrentProject.getTaskList();        	
 		}
 		else {
 			tl = CurrentStorage.get().openTaskList(p);        	
@@ -71,7 +71,7 @@ public class AgendaGenerator {
 			//            TaskSorter.sort(tasks, date, TaskSorter.BY_IMP_RATE); // TODO: configurable method
 			Collections.sort(tasks);
 			for (Iterator i = tasks.iterator(); i.hasNext();) {
-				Task t = (Task) i.next();
+				ITask t = (ITask) i.next();
 				// Always show active tasks only on agenda page from now on.
 				// If it's not active, then it's probably "not on the agenda" isn't it?
 				//        		if(Context.get("SHOW_ACTIVE_TASKS_ONLY").equals(new Boolean(true))) {
@@ -100,7 +100,7 @@ public class AgendaGenerator {
 	 * @param t
 	 * @param expandedTasks
 	 */
-	private static String expandRecursively(Project p,CalendarDate date, TaskList tl,Task t, Collection expandedTasks, int level) {
+	private static String expandRecursively(AProject p,CalendarDate date, ITaskList tl,ITask t, Collection expandedTasks, int level) {
 		Util.debug("Expanding task " + t.getText() + " level " + level);
 
 		Collection st = tl.getActiveSubTasks(t.getID(),date);
@@ -110,7 +110,7 @@ public class AgendaGenerator {
 		String s = "\n<ul>\n";
 
 		for (Iterator iter = st.iterator(); iter.hasNext();) {
-			Task subTask = (Task) iter.next();
+			ITask subTask = (ITask) iter.next();
 			//			if(Context.get("SHOW_ACTIVE_TASKS_ONLY").equals(new Boolean(true))) {
 			//                if (!((subTask.getStatus() == Task.ACTIVE) || (subTask.getStatus() == Task.DEADLINE) || (subTask.getStatus() == Task.FAILED))) {
 			//                	continue;
@@ -133,7 +133,7 @@ public class AgendaGenerator {
 	 * @param t
 	 * @return
 	 */
-	private static String renderTask(Project p, CalendarDate date, TaskList tl, Task t, int level, Collection expandedTasks) {
+	private static String renderTask(AProject p, CalendarDate date, ITaskList tl, ITask t, int level, Collection expandedTasks) {
 		String s = "";
 
 		int pg = t.getProgress();
@@ -241,13 +241,13 @@ public class AgendaGenerator {
 		return s;
 	}
 
-	static int getProgress(TaskList tl) {
+	static int getProgress(ITaskList tl) {
 		Vector v = (Vector) tl.getAllSubTasks(null);
 		if (v.size() == 0)
 			return -1;
 		int p = 0;
 		for (Enumeration en = v.elements(); en.hasMoreElements();) {
-			Task t = (Task) en.nextElement();
+			ITask t = (ITask) en.nextElement();
 			p += t.getProgress();
 		}
 		return (p * 100) / (v.size() * 100);
@@ -255,21 +255,21 @@ public class AgendaGenerator {
 
 	static String getPriorityString(int p) {
 		switch (p) {
-		case Task.PRIORITY_NORMAL :
+		case ITask.PRIORITY_NORMAL :
 			return "<font color=\"green\">"+Local.getString("Normal")+"</font>";
-		case Task.PRIORITY_LOW :
+		case ITask.PRIORITY_LOW :
 			return "<font color=\"#3333CC\">"+Local.getString("Low")+"</font>";
-		case Task.PRIORITY_LOWEST :
+		case ITask.PRIORITY_LOWEST :
 			return "<font color=\"#666699\">"+Local.getString("Lowest")+"</font>";
-		case Task.PRIORITY_HIGH :
+		case ITask.PRIORITY_HIGH :
 			return "<font color=\"#FF9900\">"+Local.getString("High")+"</font>";
-		case Task.PRIORITY_HIGHEST :
+		case ITask.PRIORITY_HIGHEST :
 			return "<font color=\"red\">"+Local.getString("Highest")+"</font>";
 		}
 		return "";
 	}
 
-	static String generateProjectInfo(Project p, CalendarDate date, Collection expandedTasks) {
+	static String generateProjectInfo(AProject p, CalendarDate date, Collection expandedTasks) {
 		String s = "<h2><a href=\"memoranda:project#"
 				+ p.getID()
 				+ "\">"
@@ -289,12 +289,12 @@ public class AgendaGenerator {
 						+ "<h1>"
 						+ Local.getString("Projects and tasks")
 						+ "</h1>\n";
-		s += generateProjectInfo(CurrentProject.get(), date, expandedTasks);        
-		for (Iterator i = ProjectManager.getActiveProjects().iterator();
+		s += generateProjectInfo(ACurrentProject.get(), date, expandedTasks);        
+		for (Iterator i = AProjectManager.getActiveProjects().iterator();
 				i.hasNext();
 				) {
-			Project p = (Project) i.next();
-			if (!p.getID().equals(CurrentProject.get().getID()))
+			AProject p = (AProject) i.next();
+			if (!p.getID().equals(ACurrentProject.get().getID()))
 				s += generateProjectInfo(p, date, expandedTasks);
 		}
 		return s + "</td>";
@@ -307,10 +307,10 @@ public class AgendaGenerator {
 						+ Local.getString("Events")
 						+ "</h1></a>\n"
 						+ "<table width=\"100%\" valign=\"top\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#FFFFF6\">\n";
-		Vector v = (Vector) EventsManager.getEventsForDate(date);
+		Vector v = (Vector) AEventsManager.getEventsForDate(date);
 		int n = 0;
 		for (Iterator i = v.iterator(); i.hasNext();) {
-			Event e = (Event) i.next();
+			AEvent e = (AEvent) i.next();
 			String txt = e.getText();
 			String iurl =
 					main.java.memoranda.ui
@@ -321,8 +321,8 @@ public class AgendaGenerator {
 			if (date.equals(CalendarDate.today())) {
 				if (e.getTime().after(new Date()))
 					txt = "<b>" + txt + "</b>";
-				if ((EventsScheduler.isEventScheduled())
-						&& (EventsScheduler
+				if ((AEventsScheduler.isEventScheduled())
+						&& (AEventsScheduler
 								.getFirstScheduledEvent()
 								.getTime()
 								.equals(e.getTime()))) {
@@ -367,7 +367,7 @@ public class AgendaGenerator {
 				.class
 				.getResource("/ui/agenda/removesticker.gif")
 				.toExternalForm();
-		 String s = "<hr><hr><table border=\"0\" cellpadding=\"0\" width=\"100%\"><tr><td><a href=\"memoranda:importstickers\"><b>"+Local.getString("Importar anotaci�n")+"</b></a></td><td><a href=\"memoranda:exportstickerst\"><b>"+Local.getString("Exportar anotaci�n como .txt")+"</b></a><td><a href=\"memoranda:exportstickersh\"><b>"+Local.getString("Exportar anotaci�n como .html")+"</b></a></td></tr></table>"
+		 String s = "<hr><hr><table border=\"0\" cellpadding=\"0\" width=\"100%\"><tr><td><a href=\"memoranda:importstickers\"><b>"+Local.getString("Import Annotation")+"</b></a></td><td><a href=\"memoranda:exportstickerst\"><b>"+Local.getString("Export Annotation .txt")+"</b></a><td><a href=\"memoranda:exportstickersh\"><b>"+Local.getString("Export Annotation .html")+"</b></a></td></tr></table>"
 				 +   "<table border=\"0\" cellpadding=\"0\" width=\"100%\"><tr><td><a href=\"memoranda:addsticker\"><img align=\"left\" width=\"22\" height=\"22\" src=\""				
 				 + iurl
 				+ "\" border=\"0\"  hspace=\"0\" vspace=\"0\" alt=\"New sticker\"></a></td><td width=\"100%\"><a href=\"memoranda:addsticker\"><b>&nbsp;"
@@ -388,7 +388,7 @@ public class AgendaGenerator {
 	}
 
     private static PriorityQueue sortStickers(){
-        Map stickers = EventsManager.getStickers();
+        Map stickers = AEventsManager.getStickers();
         PriorityQueue pQ = new PriorityQueue(stickers.size());
     	for (Iterator i = stickers.keySet().iterator(); i.hasNext();) {
         	String id = (String)i.next();

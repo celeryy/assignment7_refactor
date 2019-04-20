@@ -8,8 +8,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
 
-import main.java.memoranda.Project;
-import main.java.memoranda.ProjectManager;
+import main.java.memoranda.interfaces.AProject;
+import main.java.memoranda.interfaces.AProjectManager;
 import nu.xom.Attribute;
 import nu.xom.DocType;
 import nu.xom.Document;
@@ -59,11 +59,11 @@ public class TaskListVersioning {
         }
         else {
             // get all projects
-            Vector projects = ProjectManager.getAllProjects();
+            Vector projects = AProjectManager.getAllProjects();
             String[] projectIds = new String[projects.size()];
             int c = 0;
             for (Iterator iter = projects.iterator(); iter.hasNext();) {
-                Project prj = (Project) iter.next();
+                AProject prj = (AProject) iter.next();
                 projectIds[c++] = prj.getID();
             }
             
