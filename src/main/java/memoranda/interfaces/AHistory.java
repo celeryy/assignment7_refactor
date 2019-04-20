@@ -20,6 +20,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import main.java.memoranda.date.CalendarDate;
 import main.java.memoranda.util.Local;
 /**
  * 
@@ -214,6 +215,43 @@ public class AHistory {
                 putValue(Action.SHORT_DESCRIPTION, Local.getString("Forward"));
             }
         }
+    }
+    /**
+     * 3-2 CODE SMELLS BETWEEN CLASSES
+     * the class AHistoryItem was not pulling its weight, needed to be combined
+     * into another class; added to AHistory.java
+     * @author celery
+     *
+     */
+   public class AHistoryItem {
+        
+        private CalendarDate _date;
+        private AProject _project;
+        /**
+         * Constructor for HistoryItem.
+         */
+        public AHistoryItem(CalendarDate date, AProject project) {
+            _date = date;
+            _project = project;
+        }
+        
+        public AHistoryItem(INote note) {
+            _date = note.getDate();
+            _project = note.getProject();
+        }
+        
+        public CalendarDate getDate() {
+           return _date;
+        }
+        
+        public AProject getProject() {
+           return _project;
+        }
+        
+        public boolean equals(AHistoryItem i) {
+           return i.getDate().equals(_date) && i.getProject().getID().equals(_project.getID());
+        } 
+
     }
 
 }

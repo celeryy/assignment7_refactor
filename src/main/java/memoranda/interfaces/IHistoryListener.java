@@ -8,6 +8,8 @@
  */
 package main.java.memoranda.interfaces;
 
+import main.java.memoranda.interfaces.AHistory.AHistoryItem;
+
 /**
  * 
  */
