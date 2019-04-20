@@ -30,7 +30,7 @@ import main.java.memoranda.interfaces.ACurrentProject;
 import main.java.memoranda.interfaces.IEventNotificationListener;
 import main.java.memoranda.interfaces.AEventsScheduler;
 import main.java.memoranda.interfaces.AHistory;
-import main.java.memoranda.interfaces.AHistoryItem;
+import main.java.memoranda.interfaces.AHistory.AHistoryItem;
 import main.java.memoranda.interfaces.IHistoryListener;
 import main.java.memoranda.interfaces.INote;
 import main.java.memoranda.interfaces.INoteList;
@@ -295,7 +295,7 @@ public class DailyItemsPanel extends JPanel {
         currentNote = ACurrentProject.getNoteList().getNoteForDate(CurrentDate.get());
 		ACurrentNote.set(currentNote,true);
         editorPanel.setDocument(currentNote);
-        AHistory.add(new AHistoryItem(CurrentDate.get(), ACurrentProject.getProject()));
+        //AHistory.add(new AHistoryItem(CurrentDate.get(), ACurrentProject.getProject()));
         cmainPanel.add(mainTabsPanel, BorderLayout.CENTER);
         mainTabsPanel.add(eventsTabbedPane, "EVENTSTAB");
         mainTabsPanel.add(tasksTabbedPane, "TASKSTAB");
@@ -311,7 +311,7 @@ public class DailyItemsPanel extends JPanel {
         Cursor cur = App.getFrame().getCursor();
         App.getFrame().setCursor(waitCursor);
         if (!changedByHistory) {
-           AHistory.add(new AHistoryItem(newdate, ACurrentProject.getProject()));
+           //AHistory.add(new AHistoryItem(newdate, ACurrentProject.getProject()));
 		}
         if (!dateChangedByCalendar) {
             calendarIgnoreChange = true;
@@ -368,7 +368,7 @@ public class DailyItemsPanel extends JPanel {
         Cursor cur = App.getFrame().getCursor();
         App.getFrame().setCursor(waitCursor);
         if (!changedByHistory)
-            AHistory.add(new AHistoryItem(CurrentDate.get(), newprj));
+            //AHistory.add(new AHistoryItem(CurrentDate.get(), newprj));
         if (editorPanel.isDocumentChanged())
             saveNote();
         /*if ((currentNote != null) && !changedByHistory && !addedToHistory)
