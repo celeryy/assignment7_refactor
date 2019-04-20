@@ -1,7 +1,7 @@
 apply plugin: 'jacoco'
 apply plugin: 'application'
 
-mainClassName = 'main/java/memoranda/Start'
+mainClassName = 'main/java/memoranda/interfaces/Start'
 
 compileJava.options.encoding = 'UTF-8'
 
